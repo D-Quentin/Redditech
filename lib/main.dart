@@ -20,12 +20,18 @@ class Redditech extends StatelessWidget {
 }
 
 class RedditechHomePage extends StatefulWidget {
+  RedditechHomePage(this.token);
+
+  final String token;
   @override
-  _RedditechHomePageState createState() => _RedditechHomePageState();
+  RedditechHomePageState createState() => RedditechHomePageState(token);
 }
 
-class _RedditechHomePageState extends State<RedditechHomePage> {
+class RedditechHomePageState extends State<RedditechHomePage> {
+  RedditechHomePageState(this.token);
+
   int selectedIndex = 0;
+  String token;
   String subreddit_url = "/r/subreddit";
   final Client client = Client();
 
@@ -44,19 +50,15 @@ class _RedditechHomePageState extends State<RedditechHomePage> {
   Widget getBody() {
     switch (this.selectedIndex) {
       case 0:
-        return _SubredditNewWidget(
-            client: this.client, subreddit_url: this.subreddit_url);
+        return _SubredditNewWidget(this.client, this.subreddit_url);
       case 1:
-        return _SubredditHotWidget(
-            client: this.client, subreddit_url: this.subreddit_url);
+        return _SubredditHotWidget(this.client, this.subreddit_url);
       case 2:
-        return _SubredditSearchWidget(
-            client: this.client, subreddit_url: this.subreddit_url);
+        return _SubredditSearchWidget(this.client, this.subreddit_url);
       case 3:
         return _SubredditSettingsWidget();
       default:
-        return _SubredditNewWidget(
-            client: this.client, subreddit_url: this.subreddit_url);
+        return _SubredditNewWidget(this.client, this.subreddit_url);
     }
   }
 
@@ -85,9 +87,7 @@ class _RedditechHomePageState extends State<RedditechHomePage> {
 }
 
 class _SubredditNewWidget extends StatelessWidget {
-  _SubredditNewWidget(
-      {Key? key, required this.client, required this.subreddit_url})
-      : super(key: key);
+  _SubredditNewWidget(this.client, this.subreddit_url);
 
   final Client client;
   final String subreddit_url;
@@ -98,9 +98,7 @@ class _SubredditNewWidget extends StatelessWidget {
 }
 
 class _SubredditHotWidget extends StatelessWidget {
-  _SubredditHotWidget(
-      {Key? key, required this.client, required this.subreddit_url})
-      : super(key: key);
+  _SubredditHotWidget(this.client, this.subreddit_url);
 
   final Client client;
   final String subreddit_url;
@@ -111,9 +109,7 @@ class _SubredditHotWidget extends StatelessWidget {
 }
 
 class _SubredditSearchWidget extends StatelessWidget {
-  _SubredditSearchWidget(
-      {Key? key, required this.client, required this.subreddit_url})
-      : super(key: key);
+  _SubredditSearchWidget(this.client, this.subreddit_url);
 
   final Client client;
   final String subreddit_url;
