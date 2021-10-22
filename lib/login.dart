@@ -1,92 +1,71 @@
-import 'dart:io';
-// import 'package:redditech/main.dart';
+import 'package:redditech/main.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class LoginView extends StatefulWidget {
-  LoginView({Key? key}) : super(key: key);
-
   @override
   _LoginViewState createState() => _LoginViewState();
 }
 
 class _LoginViewState extends State<LoginView> {
-  int selectedIndex = 1;
-  bool isLoggedIn = false;
+  final username = TextEditingController();
+  final password = TextEditingController();
 
-  void _onTapHandler(int index) {
-    this.setState(() {
-      this.selectedIndex = index;
-    });
-  }
-
-  Widget getBody() {
-    switch (this.selectedIndex) {
-      case 0:
-        return _LoginView();
-      case 1:
-        return _RegisterWebView();
-      default:
-        return _LoginView();
-    }
+  getItemAndNavigate(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => _LoginRequest(
+          usernameHolder: username.text,
+          passwordHolder: password.text,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Login")),
-      body: this.getBody(),
-      bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: this.selectedIndex,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.login_rounded), label: "Login"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.app_registration_rounded), label: "Register"),
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            Container(
+                width: 280,
+                padding: const EdgeInsets.only(top: 120.0, bottom: 5.0),
+                child: TextField(
+                  controller: username,
+                  decoration: InputDecoration(hintText: 'Username'),
+                )),
+            Container(
+                width: 280,
+                padding: const EdgeInsets.only(top: 20.0, bottom: 30.0),
+                child: TextField(
+                  controller: password,
+                  decoration: InputDecoration(hintText: 'Password'),
+                )),
+            TextButton(
+              child: Text('Login'),
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+              onPressed: () {
+                getItemAndNavigate(context);
+              },
+            ),
           ],
-          onTap: (int index) {
-            this._onTapHandler(index);
-          }),
+        ),
+      ),
     );
   }
 }
 
-class _LoginView extends StatelessWidget {
-  _LoginView({Key? key}) : super(key: key);
+class _LoginRequest extends StatelessWidget {
+  final usernameHolder;
+  final passwordHolder;
+
+  _LoginRequest({@required this.usernameHolder, this.passwordHolder});
 
   Widget build(BuildContext context) {
-    return Center(child: Text("test"));
+    return RedditechHomePage();
   }
 }
-
-class _RegisterWebView extends StatelessWidget {
-  _RegisterWebView({Key? key}) : super(key: key);
-
-  Widget build(BuildContext context) {
-    return WebView(
-      initialUrl: "https://www.reddit.com/register",
-      javascriptMode: JavascriptMode.unrestricted,
-    );
-  }
-}
-
-// class _LoginViewState extends State<LoginView> {
-//   bool isLoggedIn = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     if (Platform.isAndroid) {
-//       WebView.platform = SurfaceAndroidWebView();
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return WebView(
-//       initialUrl: "https://www.reddit.com/login",
-//       javascriptMode: JavascriptMode.unrestricted,
-//     );
-//   }
-// }

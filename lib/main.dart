@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 import "package:redditech/login.dart";
 // import "package:redditech/http_service.dart";
 
-void main() => runApp(LoginView());
+void main() => runApp(Redditech());
 
 class Redditech extends StatelessWidget {
   @override
@@ -14,18 +14,12 @@ class Redditech extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.blue,
       ),
-      home: RedditechHomePage(
-        title: "Redditech",
-      ),
+      home: LoginView(),
     );
   }
 }
 
 class RedditechHomePage extends StatefulWidget {
-  RedditechHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
   @override
   _RedditechHomePageState createState() => _RedditechHomePageState();
 }
