@@ -1,7 +1,8 @@
 import "package:http/http.dart";
-import "package:flutter/material.dart";
 import "package:redditech/login.dart";
-// import "package:redditech/http_service.dart";
+import "package:flutter/material.dart";
+import "package:redditech/secret.dart";
+import 'package:redditech/api_request.dart';
 
 void main() => runApp(Redditech());
 
@@ -20,26 +21,22 @@ class Redditech extends StatelessWidget {
 }
 
 class RedditechHomePage extends StatefulWidget {
-  RedditechHomePage(this.token);
+  RedditechHomePage(this.secret);
 
-  final String token;
+  final Secret secret;
+
   @override
-  RedditechHomePageState createState() => RedditechHomePageState(token);
+  RedditechHomePageState createState() => RedditechHomePageState(secret);
 }
 
 class RedditechHomePageState extends State<RedditechHomePage> {
-  RedditechHomePageState(this.token);
+  RedditechHomePageState(this.secret);
 
+  Secret secret;
   int selectedIndex = 0;
-  String token;
-  String subreddit_url = "/r/subreddit";
-  final Client client = Client();
-
-  void _changeSubreddit(String subreddit) {
-    setState(() {
-      subreddit_url = subreddit;
-    });
-  }
+  String sub_subreddit = "";
+  String data_user = "";
+  APIRequest api_request = APIRequest();
 
   void _onTapHandler(int index) {
     this.setState(() {
@@ -50,29 +47,35 @@ class RedditechHomePageState extends State<RedditechHomePage> {
   Widget getBody() {
     switch (this.selectedIndex) {
       case 0:
-        return _SubredditNewWidget(this.client, this.subreddit_url);
+        return SubredditNewWidget(this.secret);
       case 1:
-        return _SubredditHotWidget(this.client, this.subreddit_url);
+        return SubredditHotWidget(this.secret);
       case 2:
-        return _SubredditSearchWidget(this.client, this.subreddit_url);
+        return SubredditSearchWidget(this.secret);
       case 3:
-        return _SubredditSettingsWidget();
+        return SubredditSettingsWidget(this.secret);
       default:
-        return _SubredditNewWidget(this.client, this.subreddit_url);
+        return SubredditNewWidget(this.secret);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    api_request.RequestUserData(this.secret).then((String result) {
+      setState(() {
+        data_user = result;
+      });
+    });
+    print(data_user);
     return Scaffold(
-      appBar: AppBar(title: Text("$subreddit_url")),
+      appBar: AppBar(title: Text("Redditech")),
       body: this.getBody(),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: this.selectedIndex,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.fiber_new_rounded), label: "New"),
+                icon: Icon(Icons.fiber_new_rounded), label: "$sub_subreddit"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.local_fire_department_rounded), label: "Hot"),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
@@ -86,40 +89,42 @@ class RedditechHomePageState extends State<RedditechHomePage> {
   }
 }
 
-class _SubredditNewWidget extends StatelessWidget {
-  _SubredditNewWidget(this.client, this.subreddit_url);
+class SubredditNewWidget extends StatelessWidget {
+  SubredditNewWidget(this.secret);
 
-  final Client client;
-  final String subreddit_url;
+  final Secret secret;
+  final APIRequest api_request = APIRequest();
 
   Widget build(BuildContext context) {
-    return Center(child: Text("koukou"));
+    return Center(child: Text("Salut"));
   }
 }
 
-class _SubredditHotWidget extends StatelessWidget {
-  _SubredditHotWidget(this.client, this.subreddit_url);
+class SubredditHotWidget extends StatelessWidget {
+  SubredditHotWidget(this.secret);
 
-  final Client client;
-  final String subreddit_url;
+  final Secret secret;
 
   Widget build(BuildContext context) {
     return Center(child: Text("Hot"));
   }
 }
 
-class _SubredditSearchWidget extends StatelessWidget {
-  _SubredditSearchWidget(this.client, this.subreddit_url);
+class SubredditSearchWidget extends StatelessWidget {
+  SubredditSearchWidget(this.secret);
 
-  final Client client;
-  final String subreddit_url;
+  final Secret secret;
 
   Widget build(BuildContext context) {
     return Center(child: Text("Search"));
   }
 }
 
-class _SubredditSettingsWidget extends StatelessWidget {
+class SubredditSettingsWidget extends StatelessWidget {
+  SubredditSettingsWidget(this.secret);
+
+  final Secret secret;
+
   Widget build(BuildContext context) {
     return Center(child: Text("Settings"));
   }

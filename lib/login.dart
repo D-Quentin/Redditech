@@ -1,3 +1,4 @@
+import 'package:redditech/api_request.dart';
 import "package:redditech/main.dart";
 import "package:flutter/material.dart";
 import "package:redditech/secret.dart";
@@ -9,19 +10,31 @@ class LoginView extends StatefulWidget {
 }
 
 class LoginState extends State<LoginView> {
+  LoginState() {
+    this.srct = Secret();
+    this.client_id = this.srct.getClientID();
+    this.redirect_url = this.srct.getRedirectUri();
+    this.random_string = this.srct.getRandomString();
+    this.posturl =
+        "https://www.reddit.com/api/v1/authorize.compact?client_id=$client_id&response_type=token&state=$random_string&redirect_uri=$redirect_url&scope=identity mysubreddits subscribe vote";
+  }
+  String code = "";
+  late Secret srct;
+  late String posturl;
   bool webview = true;
-  String random_str = "";
-  String token = "";
+  String client_id = "";
+  String redirect_url = "";
+  String random_string = "";
+  APIRequest api = APIRequest();
   final flutterWebViewPlugin = FlutterWebviewPlugin();
-  final String posturl =
-      "https://www.reddit.com/api/v1/authorize.compact?client_id=$client_id&response_type=code&state=test&redirect_uri=http://localhost:8080/&duration=permanent&scope=identity mysubreddits subscribe vote";
 
   Widget getBody() {
     switch (this.webview) {
       case (true):
         return (WebviewScaffold(url: posturl));
       case (false):
-        return RedditechHomePage(this.token);
+        this.flutterWebViewPlugin.close();
+        return RedditechHomePage(this.srct);
       default:
         return (WebviewScaffold(url: posturl));
     }
@@ -31,16 +44,20 @@ class LoginState extends State<LoginView> {
   void initState() {
     super.initState();
     flutterWebViewPlugin.onUrlChanged.listen((String url) {
-      if (url.contains("code=") && !url.contains("error=access_denied")) {
-        token = url.substring(url.indexOf("code=") + 5, url.indexOf("#"));
-        flutterWebViewPlugin.close();
+      if (url.contains("state=$random_string") &&
+          url.contains("access_token=")) {
+        List data = url.split("&");
+        srct.setToken(data[0].substring(data[0].indexOf("access_token=") + 13));
+        srct.setExpire(
+            int.parse(data[3].substring(data[3].indexOf("expires_in=") + 11)));
         this.setState(() {
           webview = false;
         });
-      } else if (url.contains("error=access_denied"))
+      } else if (url.contains("access_denied")) {
         this.setState(() {
           webview = true;
         });
+      }
     });
   }
 
@@ -54,57 +71,3 @@ class LoginState extends State<LoginView> {
     return this.getBody();
   }
 }
-
-// class _LoginViewState extends State<LoginView> {
-//   final username = TextEditingController();
-//   final password = TextEditingController();
-
-//   getItemAndNavigate(BuildContext context) {
-//     Navigator.push(
-//       context,
-//       MaterialPageRoute(
-//         builder: (context) => _LoginRequest(
-//           username.text,
-//           password.text,
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Login")),
-//       body: Center(
-//         child: Column(
-//           children: <Widget>[
-//             Container(
-//                 width: 280,
-//                 padding: const EdgeInsets.only(top: 120.0, bottom: 5.0),
-//                 child: TextField(
-//                   controller: username,
-//                   decoration: InputDecoration(hintText: 'Username'),
-//                 )),
-//             Container(
-//                 width: 280,
-//                 padding: const EdgeInsets.only(top: 20.0, bottom: 30.0),
-//                 child: TextField(
-//                   controller: password,
-//                   decoration: InputDecoration(hintText: 'Password'),
-//                 )),
-//             TextButton(
-//               child: Text('Login'),
-//               style: ButtonStyle(
-//                 foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
-//               ),
-//               onPressed: () {
-//                 getItemAndNavigate(context);
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-

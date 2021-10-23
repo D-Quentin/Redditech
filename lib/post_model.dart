@@ -1,22 +1,17 @@
-class Post {
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
+import "dart:convert";
 
-  Post({
-    required this.userId,
-    required this.id,
-    required this.title,
-    required this.body,
-  });
+class UserData {
+  final String display_name;
+  final String icon_img;
+  final String description;
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json["userId"] as int,
-      id: json["id"] as int,
-      body: json["body"] as String,
-      title: json["title"] as String,
-    );
+  UserData(this.display_name, this.icon_img, this.description);
+}
+
+class Unserializer {
+  UserData getUserDatafromJson(String str) {
+    final j = json.decode(str);
+    return UserData(j["userId"] as String, j["icon_img"] as String,
+        j["description"] as String);
   }
 }
