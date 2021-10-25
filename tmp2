@@ -195,7 +195,7 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                 ),
               ),
               Container(
-                  padding: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Text(
                     "Your desciption: \n\n" + user_data.description,
                     textAlign: TextAlign.left,
