@@ -44,3 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Temporary and useless file
+request_tmp/

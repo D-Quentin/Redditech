@@ -1,9 +1,9 @@
-import "package:http/http.dart";
 import "package:redditech/login.dart";
 import "package:flutter/material.dart";
 import "package:redditech/secret.dart";
-import 'package:redditech/api_request.dart';
-import 'package:redditech/post_model.dart';
+import "package:redditech/menu/new.dart";
+import "package:redditech/api_request.dart";
+import "package:redditech/menu/settings.dart";
 
 void main() => runApp(Redditech());
 
@@ -69,7 +69,7 @@ class RedditechHomePageState extends State<RedditechHomePage> {
           currentIndex: this.selectedIndex,
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.fiber_new_rounded), label: "$sub_subreddit"),
+                icon: Icon(Icons.fiber_new_rounded), label: "New"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.local_fire_department_rounded), label: "Hot"),
             BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
@@ -80,17 +80,6 @@ class RedditechHomePageState extends State<RedditechHomePage> {
             this._onTapHandler(index);
           }),
     );
-  }
-}
-
-class SubredditNewWidget extends StatelessWidget {
-  SubredditNewWidget(this.secret);
-
-  final Secret secret;
-  final APIRequest api_request = APIRequest();
-
-  Widget build(BuildContext context) {
-    return Center(child: Text("Salut"));
   }
 }
 
@@ -111,103 +100,5 @@ class SubredditSearchWidget extends StatelessWidget {
 
   Widget build(BuildContext context) {
     return Center(child: Text("Search"));
-  }
-}
-
-class SubredditSettingsWidget extends StatefulWidget {
-  SubredditSettingsWidget(this.secret);
-
-  final Secret secret;
-
-  @override
-  SubredditSettingsWidgetState createState() =>
-      SubredditSettingsWidgetState(secret);
-}
-
-class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
-  SubredditSettingsWidgetState(this.secret);
-
-  final Secret secret;
-  Unserializer unserializer = Unserializer();
-  UserData user_data =
-      UserData("", "https://i.redd.it/9n242vp9u7r31.png", "", 0);
-  String json_user_data = "";
-  APIRequest api_request = APIRequest();
-  bool refresh = true;
-
-  Widget build(BuildContext context) {
-    if (refresh) {
-      refresh = false;
-      api_request.RequestUserData(this.secret).then((String result) {
-        setState(() {
-          json_user_data = result;
-        });
-      });
-    }
-    if (json_user_data != "")
-      user_data = unserializer.getUserDatafromJson(json_user_data);
-
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Image.network(
-                    user_data.icon_img,
-                    scale: 3,
-                  ),
-                  Container(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: Text(
-                        user_data.name,
-                        overflow: TextOverflow.visible,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
-                        ),
-                      ))
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Image.network(
-                      "https://emoji.redditmedia.com/01qkrmh70ho41_t5_2qhhz/orange",
-                      scale: 4,
-                    ),
-                    Container(
-                        padding: const EdgeInsets.only(left: 7),
-                        child: Text(
-                          user_data.total_karma.toString() + " Karma",
-                          overflow: TextOverflow.visible,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ))
-                  ],
-                ),
-              ),
-              Container(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    "Your desciption: \n\n" + user_data.description,
-                    textAlign: TextAlign.left,
-                    overflow: TextOverflow.visible,
-                    style: const TextStyle(
-                      fontSize: 16,
-                    ),
-                  ))
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }
