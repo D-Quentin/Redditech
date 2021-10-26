@@ -1,6 +1,8 @@
 import "dart:convert";
 import 'dart:developer';
 
+import 'package:http/http.dart';
+
 void printWrapped(String text) {
   final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
   pattern.allMatches(text).forEach((match) => print(match.group(0)));
@@ -24,9 +26,15 @@ class SubscribedSubreddit {
 }
 
 class Post {
-  Post(this.title);
+  Post(this.after, this.title, this.author, this.subreddit, this.ups,
+      this.downs);
 
+  final int ups;
+  final int downs;
+  final String after;
   final String title;
+  final String author;
+  final String subreddit;
 }
 
 class Unserializer {
@@ -42,7 +50,7 @@ class Unserializer {
 
   List<SubscribedSubreddit> getSubcribbedSubredditFromJson(String str) {
     Map j = jsonDecode(str);
-    int nb = (j["data"]["dist"]);
+    int nb = int.parse(j["data"]["dist"].toString());
     List<SubscribedSubreddit> all_sub = [];
     for (int i = 1; i < nb; i += 1) {
       all_sub.add(SubscribedSubreddit(
@@ -52,9 +60,20 @@ class Unserializer {
     return all_sub;
   }
 
-  Post getPostFromJson(String str) {
+  List<Post> getPostFromJson(String str) {
     Map j = jsonDecode(str);
-    print(str);
-    return Post("test");
+    List<Post> posts = [];
+    int nb = j["data"]["dist"];
+    for (int i = 1; i < nb; i += 1) {
+      posts.add(Post(
+        j["data"]["after"] as String,
+        j["data"]["children"][i]["data"]["title"] as String,
+        j["data"]["children"][i]["data"]["author_fullname"] as String,
+        j["data"]["children"][i]["data"]["subreddit_name_prefixed"] as String,
+        j["data"]["children"][i]["data"]["ups"] as int,
+        j["data"]["children"][i]["data"]["downs"] as int,
+      ));
+    }
+    return posts;
   }
 }

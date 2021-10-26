@@ -1,4 +1,5 @@
 import "package:redditech/secret.dart";
+import "package:redditech/post_model.dart";
 import "package:redditech/http_service.dart";
 
 class APIRequest {
@@ -6,7 +7,6 @@ class APIRequest {
   final String url_base = "https://oauth.reddit.com";
 
   GetRequest(String url, Secret secret) {
-    print(url_base + url);
     Future<dynamic> response =
         http_service.getRequest(url_base + url, secret.getToken());
     return response;
@@ -30,8 +30,11 @@ class APIRequest {
     return GetRequest("/subreddits/mine/subscriber", secret);
   }
 
-  RequestNewPost(Secret secret, String subreddit) {
-    print("/$subreddit/new");
-    return GetRequest("/$subreddit/new", secret);
+  RequestNewPost(Secret secret) {
+    return GetRequestWithHeader("/new", secret, {"limit": "10"});
+  }
+
+  RequestNewPostAfter(Secret secret, Map header) {
+    return GetRequestWithHeader("/new", secret, header);
   }
 }
