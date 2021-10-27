@@ -19,35 +19,38 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
   SubredditNewWidgetState(this.secret);
 
   final Secret secret;
-  bool first_load = true;
-  String json_content = "";
-  List<Post> post_list = [];
+  bool firstLoad = true;
+  String jsonContent = "";
+  List<Post> postList = [];
   APIRequest api = APIRequest();
   Unserializer unserializer = Unserializer();
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   void _firstLoad() async {
-    await api.RequestNewPost(this.secret).then((String string) {
-      post_list = unserializer.getPostFromJson(string);
+    await api.requestNewPost(this.secret).then((String string) {
+      postList = unserializer.getPostFromJson(string);
       if (mounted) setState(() {});
       _refreshController.refreshCompleted();
     });
   }
 
   void _onRefresh() async {
-    await api.RequestNewPost(this.secret).then((String string) {
-      post_list = unserializer.getPostFromJson(string);
+    await api.requestNewPost(this.secret).then((String string) {
+      postList = unserializer.getPostFromJson(string);
       if (mounted) setState(() {});
       _refreshController.refreshCompleted();
     });
   }
 
   void _onLoading() async {
-    Map header = {"after": post_list.last.after, "count": post_list.length};
-    await api.RequestNewPostAfter(this.secret, header).then((String string) {
-      List<Post> post_list_after = unserializer.getPostFromJson(string);
-      post_list.addAll(post_list_after);
+    Map<String, String> header = {
+      "after": postList.last.after,
+      "count": postList.length.toString()
+    };
+    await api.requestNewPostAfter(this.secret, header).then((String string) {
+      List<Post> postListAfter = unserializer.getPostFromJson(string);
+      postList.addAll(postListAfter);
       if (mounted) setState(() {});
       _refreshController.loadComplete();
     });
@@ -55,9 +58,9 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (first_load) {
+    if (firstLoad) {
       this._firstLoad();
-      this.first_load = false;
+      this.firstLoad = false;
     }
     return Scaffold(
       body: SmartRefresher(
@@ -88,9 +91,9 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
         onRefresh: _onRefresh,
         onLoading: _onLoading,
         child: ListView.builder(
-          itemBuilder: (c, i) => Card(child: RedditPostWidget(post_list[i])),
+          itemBuilder: (c, i) => Card(child: RedditPostWidget(postList[i])),
           // itemExtent: 100.0,
-          itemCount: post_list.length,
+          itemCount: postList.length,
         ),
       ),
     );

@@ -29,7 +29,7 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
   Widget build(BuildContext context) {
     if (refresh == 0) {
       refresh = 1;
-      api_request.RequestUserData(this.secret).then((String result) {
+      api_request.requestUserData(this.secret).then((String result) {
         setState(() {
           json_user_data = result;
           refresh = 2;
