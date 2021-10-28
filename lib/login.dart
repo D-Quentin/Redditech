@@ -16,7 +16,7 @@ class LoginState extends State<LoginView> {
     this.redirect_url = this.srct.getRedirectUri();
     this.random_string = this.srct.getRandomString();
     this.posturl =
-        "https://www.reddit.com/api/v1/authorize.compact?client_id=$client_id&response_type=token&state=$random_string&redirect_uri=$redirect_url&scope=identity mysubreddits subscribe vote";
+        "https://www.reddit.com/api/v1/authorize.compact?client_id=$client_id&response_type=token&state=$random_string&redirect_uri=$redirect_url&scope=identity mysubreddits subscribe vote account";
   }
   String code = "";
   late Secret srct;
