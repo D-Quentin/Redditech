@@ -26,7 +26,7 @@ class SubscribedSubreddit {
 
 class Post {
   Post(this.after, this.title, this.author, this.subreddit, this.ups,
-      this.downs);
+      this.downs, this.imageUrl);
 
   final int ups;
   final int downs;
@@ -34,6 +34,7 @@ class Post {
   final String title;
   final String author;
   final String subreddit;
+  final String imageUrl;
 }
 
 class Unserializer {
@@ -72,12 +73,12 @@ class Unserializer {
   }
 
   List<Post> getPostFromJson(String str) {
-    print(str);
     Map j = getJsonDecode(str);
     if (j.isEmpty) return [];
     List<Post> posts = [];
     int nb = j["data"]["dist"];
-    for (int i = 1; i < nb; i += 1) {
+    for (int i = 0; i < nb; i += 1) {
+      print(j["data"]["children"][i]["data"]["url"]);
       posts.add(Post(
         j["data"]["after"] as String,
         j["data"]["children"][i]["data"]["title"] as String,
@@ -85,6 +86,7 @@ class Unserializer {
         j["data"]["children"][i]["data"]["subreddit_name_prefixed"] as String,
         j["data"]["children"][i]["data"]["ups"] as int,
         j["data"]["children"][i]["data"]["downs"] as int,
+        j["data"]["children"][i]["data"]["url"] as String,
       ));
     }
     return posts;

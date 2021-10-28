@@ -25,23 +25,23 @@ class APIRequest {
   }
 
   requestNewPage(Secret secret) {
-    return getRequest("/subreddits/mine/subscriber", secret);
+    return getRequest("/subreddits/mine/subscriber/", secret);
   }
 
   requestUserData(Secret secret) {
-    return getRequest("api/v1/me", secret);
+    return getRequest("api/v1/me/", secret);
   }
 
   requestSubscribedSubreddit(Secret secret) {
-    return getRequest("/subreddits/mine/subscriber", secret);
+    return getRequest("/subreddits/mine/subscriber/", secret);
   }
 
   requestNewPost(Secret secret) {
-    return getRequestWithHeader("/new", secret, {"limit": "10"});
+    return getRequest("/new/", secret);
   }
 
-  requestNewPostAfter(Secret secret, Map<String, String> header) {
-    return getRequestWithHeader("/new", secret, header);
+  requestNewPostAfter(Secret secret, String params) {
+    return getRequest("/new/" + params, secret);
   }
 
   requestToken(Secret secret) {

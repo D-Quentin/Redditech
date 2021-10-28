@@ -44,11 +44,10 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
   }
 
   void _onLoading() async {
-    Map<String, String> header = {
-      "after": postList.last.after,
-      "count": postList.length.toString()
-    };
-    await api.requestNewPostAfter(this.secret, header).then((String string) {
+    await api
+        .requestNewPostAfter(this.secret,
+            "?after=${postList.last.after}&count=${postList.length}")
+        .then((String string) {
       List<Post> postListAfter = unserializer.getPostFromJson(string);
       postList.addAll(postListAfter);
       if (mounted) setState(() {});
@@ -91,7 +90,7 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
         onRefresh: _onRefresh,
         onLoading: _onLoading,
         child: ListView.builder(
-          itemBuilder: (c, i) => Card(child: RedditPostWidget(postList[i])),
+          itemBuilder: (c, i) => Card(child: RedditechPostWidget(postList[i])),
           // itemExtent: 100.0,
           itemCount: postList.length,
         ),

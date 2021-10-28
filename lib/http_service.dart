@@ -1,4 +1,3 @@
-import "dart:convert";
 import "package:http/http.dart";
 
 class HttpService {
@@ -14,6 +13,7 @@ class HttpService {
   }
 
   Future<String> getRequest(String url, String token) async {
+    print(token);
     final header = {
       "Content-Type": "application/json",
       "Authorization": "bearer $token"
