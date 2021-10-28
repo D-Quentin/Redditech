@@ -24,12 +24,18 @@ class APIRequest {
     return response;
   }
 
+  patchRequestWithHeader(String url, Secret secret, json) {
+    Future<dynamic> response =
+        httpService.patchRequest(urlBase + url, secret.getToken(), json);
+    return response;
+  }
+
   requestNewPage(Secret secret) {
     return getRequest("/subreddits/mine/subscriber/", secret);
   }
 
   requestUserData(Secret secret) {
-    return getRequest("api/v1/me/", secret);
+    return getRequest("api/v1/me", secret);
   }
 
   requestSubscribedSubreddit(Secret secret) {
@@ -55,5 +61,13 @@ class APIRequest {
       "code": secret.getCode(),
       "redirect_uri": secret.getRedirectUri()
     });
+  }
+
+  requestUserSettings(Secret secret) {
+    return getRequest("/api/v1/me/prefs", secret);
+  }
+
+  updateUserSettings(Secret secret, String settings) {
+    return patchRequestWithHeader("/api/v1/me/prefs", secret, settings);
   }
 }

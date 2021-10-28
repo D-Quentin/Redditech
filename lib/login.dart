@@ -1,5 +1,4 @@
 import "dart:convert";
-import 'dart:io';
 import "package:redditech/main.dart";
 import "package:flutter/material.dart";
 import "package:redditech/secret.dart";
@@ -18,7 +17,7 @@ class LoginState extends State<LoginView> {
     this.redirectUrl = this.srct.getRedirectUri();
     this.randomString = this.srct.getRandomString();
     this.posturl =
-        "https://www.reddit.com/api/v1/authorize.compact?client_id=$clientId&response_type=code&state=$randomString&redirect_uri=$redirectUrl&duration=permanent&scope=identity mysubreddits subscribe vote read";
+        "https://www.reddit.com/api/v1/authorize.compact?client_id=$clientId&response_type=code&state=$randomString&redirect_uri=$redirectUrl&duration=permanent&scope=identity mysubreddits subscribe vote read account";
   }
   String code = "";
   late Secret srct;
