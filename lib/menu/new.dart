@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
+import "package:redditech/reddit_post_widget.dart";
 import "package:redditech/secret.dart";
-import "package:flutter/material.dart";
 import "package:redditech/post_model.dart";
-import 'package:redditech/api_request.dart';
+import "package:flutter/cupertino.dart";
+import "package:redditech/api_request.dart";
+import "package:pull_to_refresh/pull_to_refresh.dart";
 
 class SubredditNewWidget extends StatefulWidget {
   SubredditNewWidget(this.secret);
@@ -16,32 +18,84 @@ class SubredditNewWidget extends StatefulWidget {
 class SubredditNewWidgetState extends State<SubredditNewWidget> {
   SubredditNewWidgetState(this.secret);
 
-  bool refresh = true;
   final Secret secret;
-  String json_content = "";
+  bool firstLoad = true;
+  String jsonContent = "";
+  List<Post> postList = [];
+  APIRequest api = APIRequest();
   Unserializer unserializer = Unserializer();
-  APIRequest api_request = APIRequest();
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
-  Widget build(BuildContext build) {
-    if (refresh) {
-      refresh = false;
-      api_request.RequestSubscribedSubreddit(this.secret).then((String string) {
-        List<SubscribedSubreddit> subreddit_list =
-            unserializer.getSubcribbedSubredditFromJson(string);
-        List<Post> post_list = [];
-        for (var it = subreddit_list.iterator; it.moveNext();) {
-          api_request.RequestNewPost(this.secret, it.current.display_name)
-              .then((String string) {
-            post_list.add(unserializer.getPostFromJson(string));
-          });
-        }
-      });
+  void _firstLoad() async {
+    await api.requestNewPost(this.secret).then((String string) {
+      postList = unserializer.getPostFromJson(string);
+      if (mounted) setState(() {});
+      _refreshController.refreshCompleted();
+    });
+  }
 
-      //     json_content = result;
-      //   });
-      // });
+  void _onRefresh() async {
+    await api.requestNewPost(this.secret).then((String string) {
+      postList = unserializer.getPostFromJson(string);
+      if (mounted) setState(() {});
+      _refreshController.refreshCompleted();
+    });
+  }
+
+  void _onLoading() async {
+    Map<String, String> header = {
+      "after": postList.last.after,
+      "count": postList.length.toString()
+    };
+    await api.requestNewPostAfter(this.secret, header).then((String string) {
+      List<Post> postListAfter = unserializer.getPostFromJson(string);
+      postList.addAll(postListAfter);
+      if (mounted) setState(() {});
+      _refreshController.loadComplete();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (firstLoad) {
+      this._firstLoad();
+      this.firstLoad = false;
     }
-    return Center(child: Text("Salut"));
-    // if (json_content != "")
+    return Scaffold(
+      body: SmartRefresher(
+        enablePullDown: true,
+        enablePullUp: true,
+        header: WaterDropHeader(),
+        footer: CustomFooter(
+          builder: (BuildContext context, LoadStatus? mode) {
+            Widget body;
+            if (mode == LoadStatus.idle) {
+              body = Text("pull up load");
+            } else if (mode == LoadStatus.loading) {
+              body = CupertinoActivityIndicator();
+            } else if (mode == LoadStatus.failed) {
+              body = Text("Load Failed! Click retry!");
+            } else if (mode == LoadStatus.canLoading) {
+              body = Text("Release to load more");
+            } else {
+              body = Text("No more Data");
+            }
+            return Container(
+              height: 100.0,
+              child: Center(child: body),
+            );
+          },
+        ),
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        child: ListView.builder(
+          itemBuilder: (c, i) => Card(child: RedditPostWidget(postList[i])),
+          // itemExtent: 100.0,
+          itemCount: postList.length,
+        ),
+      ),
+    );
   }
 }

@@ -18,92 +18,92 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
 
   final Secret secret;
   Unserializer unserializer = Unserializer();
-  UserData user_data =
+  UserData userData =
       UserData("", "https://i.redd.it/9n242vp9u7r31.png", "", 0);
-  UserSettings user_settings =
+  UserSettings userSettings =
       UserSettings(false, false, false, false, false, false);
-  String json_user_data = "";
-  String json_user_settings = "";
-  APIRequest api_request = APIRequest();
-  int refresh_user_data = 0;
-  int refresh_user_settings = 0;
-  int settings_change = 0;
+  String jsonUserData = "";
+  String jsonUserSettings = "";
+  APIRequest apiRequest = APIRequest();
+  int refreshUserData = 0;
+  int refreshUserSettings = 0;
+  int settingsChange = 0;
 
   Widget build(BuildContext context) {
-    if (refresh_user_data == 0) {
-      refresh_user_data = 1;
-      // api_request.RequestUserData(this.secret).then((String result) {
-      //   setState(() {
-      //     json_user_data = result;
-      //     refresh_user_data = 2;
-      //   });
-      // });
+    if (refreshUserData == 0) {
+      refreshUserData = 1;
+      apiRequest.requestUserData(this.secret).then((String result) {
+        setState(() {
+          jsonUserData = result;
+          refreshUserData = 2;
+        });
+      });
     }
-    if (refresh_user_settings == 0) {
-      refresh_user_settings = 1;
-      // api_request.RequestUserSettings(this.secret).then((String result) {
-      //   setState(() {
-      //     json_user_settings = result;
-      //     refresh_user_settings = 2;
-      //   });
-      // });
+    if (refreshUserSettings == 0) {
+      refreshUserSettings = 1;
+      apiRequest.requestUserSettings(this.secret).then((String result) {
+        setState(() {
+          jsonUserSettings = result;
+          refreshUserSettings = 2;
+        });
+      });
     }
-    if (json_user_data != "" && refresh_user_data == 2) {
-      refresh_user_data = 3;
-      user_data = unserializer.getUserDatafromJson(json_user_data);
+    if (jsonUserData != "" && refreshUserData == 2) {
+      refreshUserData = 3;
+      userData = unserializer.getUserDatafromJson(jsonUserData);
     }
-    if (json_user_settings != "" && refresh_user_settings == 2) {
-      refresh_user_settings = 3;
-      user_settings = unserializer.getUserSettingsfromJson(json_user_settings);
+    if (jsonUserSettings != "" && refreshUserSettings == 2) {
+      refreshUserSettings = 3;
+      userSettings = unserializer.getUserSettingsfromJson(jsonUserSettings);
     }
-    switch (settings_change) {
+    switch (settingsChange) {
       case 1:
-        if (user_settings.over_18)
-          api_request.UpdateUserSettings(secret, '{"over_18": true}');
+        if (userSettings.over_18)
+          apiRequest.updateUserSettings(secret, '{"over_18": true}');
         else
-          api_request.UpdateUserSettings(secret, '{"over_18": false}');
-        settings_change = 0;
+          apiRequest.updateUserSettings(secret, '{"over_18": false}');
+        settingsChange = 0;
         break;
       case 2:
-        if (user_settings.enable_followers)
-          api_request.UpdateUserSettings(secret, '{"enable_followers": true}');
+        if (userSettings.enable_followers)
+          apiRequest.updateUserSettings(secret, '{"enable_followers": true}');
         else
-          api_request.UpdateUserSettings(secret, '{"enable_followers": false}');
-        settings_change = 0;
+          apiRequest.updateUserSettings(secret, '{"enable_followers": false}');
+        settingsChange = 0;
         break;
       case 3:
-        if (user_settings.no_profanity)
-          api_request.UpdateUserSettings(secret, '{"no_profanity": true}');
+        if (userSettings.no_profanity)
+          apiRequest.updateUserSettings(secret, '{"no_profanity": true}');
         else
-          api_request.UpdateUserSettings(secret, '{"no_profanity": false}');
-        settings_change = 0;
+          apiRequest.updateUserSettings(secret, '{"no_profanity": false}');
+        settingsChange = 0;
         break;
       case 4:
-        if (user_settings.show_location_based_recommendations)
-          api_request.UpdateUserSettings(
+        if (userSettings.show_location_based_recommendations)
+          apiRequest.updateUserSettings(
               secret, '{"show_location_based_recommendations": true}');
         else
-          api_request.UpdateUserSettings(
+          apiRequest.updateUserSettings(
               secret, '{"show_location_based_recommendations": false}');
-        settings_change = 0;
+        settingsChange = 0;
         break;
       case 5:
-        if (user_settings.third_party_personalized_ads)
-          api_request.UpdateUserSettings(
+        if (userSettings.third_party_personalized_ads)
+          apiRequest.updateUserSettings(
               secret, '{"third_party_personalized_ads": true}');
         else
-          api_request.UpdateUserSettings(
+          apiRequest.updateUserSettings(
               secret, '{"third_party_personalized_ads": false}');
-        settings_change = 0;
+        settingsChange = 0;
         break;
       case 6:
-        if (user_settings.email_private_message)
-          api_request.UpdateUserSettings(
+        if (userSettings.email_private_message)
+          apiRequest.updateUserSettings(
               secret, '{"email_private_message": true}');
         else
-          api_request.UpdateUserSettings(
+          apiRequest.updateUserSettings(
               secret, '{"email_private_message": false}');
-        settings_change = 0;
+        settingsChange = 0;
         break;
       default:
         break;
@@ -121,13 +121,13 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                 Row(
                   children: [
                     Image.network(
-                      user_data.icon_img,
+                      userData.icon_img,
                       scale: 3,
                     ),
                     Container(
                         padding: const EdgeInsets.only(left: 10),
                         child: Text(
-                          user_data.name,
+                          userData.name,
                           overflow: TextOverflow.visible,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
@@ -148,7 +148,7 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                       Container(
                           padding: const EdgeInsets.only(left: 7),
                           child: Text(
-                            user_data.total_karma.toString() + " Karma",
+                            userData.total_karma.toString() + " Karma",
                             overflow: TextOverflow.visible,
                             textAlign: TextAlign.left,
                             style: const TextStyle(
@@ -162,7 +162,7 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                 Container(
                     padding: const EdgeInsets.only(top: 20, bottom: 12),
                     child: Text(
-                      "Your desciption: \n\n" + user_data.description,
+                      "Your desciption: \n\n" + userData.description,
                       textAlign: TextAlign.left,
                       overflow: TextOverflow.visible,
                       style: const TextStyle(
@@ -201,11 +201,11 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                         ),
                       ),
                       Switch(
-                          value: user_settings.over_18,
+                          value: userSettings.over_18,
                           onChanged: (value) {
                             setState(() {
-                              user_settings.over_18 = value;
-                              settings_change = 1;
+                              userSettings.over_18 = value;
+                              settingsChange = 1;
                             });
                           }),
                     ],
@@ -225,11 +225,11 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                         ),
                       ),
                       Switch(
-                          value: user_settings.enable_followers,
+                          value: userSettings.enable_followers,
                           onChanged: (value) {
                             setState(() {
-                              user_settings.enable_followers = value;
-                              settings_change = 1;
+                              userSettings.enable_followers = value;
+                              settingsChange = 2;
                             });
                           }),
                     ],
@@ -249,11 +249,11 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                         ),
                       ),
                       Switch(
-                          value: user_settings.no_profanity,
+                          value: userSettings.no_profanity,
                           onChanged: (value) {
                             setState(() {
-                              user_settings.no_profanity = value;
-                              settings_change = 1;
+                              userSettings.no_profanity = value;
+                              settingsChange = 3;
                             });
                           }),
                     ],
@@ -274,12 +274,12 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                       ),
                       Switch(
                           value:
-                              user_settings.show_location_based_recommendations,
+                              userSettings.show_location_based_recommendations,
                           onChanged: (value) {
                             setState(() {
-                              user_settings
-                                  .show_location_based_recommendations = value;
-                              settings_change = 1;
+                              userSettings.show_location_based_recommendations =
+                                  value;
+                              settingsChange = 4;
                             });
                           }),
                     ],
@@ -299,12 +299,11 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                         ),
                       ),
                       Switch(
-                          value: user_settings.third_party_personalized_ads,
+                          value: userSettings.third_party_personalized_ads,
                           onChanged: (value) {
                             setState(() {
-                              user_settings.third_party_personalized_ads =
-                                  value;
-                              settings_change = 1;
+                              userSettings.third_party_personalized_ads = value;
+                              settingsChange = 5;
                             });
                           }),
                     ],
@@ -324,11 +323,11 @@ class SubredditSettingsWidgetState extends State<SubredditSettingsWidget> {
                         ),
                       ),
                       Switch(
-                          value: user_settings.email_private_message,
+                          value: userSettings.email_private_message,
                           onChanged: (value) {
                             setState(() {
-                              user_settings.email_private_message = value;
-                              settings_change = 1;
+                              userSettings.email_private_message = value;
+                              settingsChange = 6;
                             });
                           }),
                     ],

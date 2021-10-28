@@ -1,58 +1,73 @@
+import "dart:convert";
 import "package:redditech/secret.dart";
 import "package:redditech/http_service.dart";
-import 'package:http/http.dart' as http;
 
 class APIRequest {
-  final HttpService http_service = HttpService();
-  final String url_base = "https://oauth.reddit.com";
+  final HttpService httpService = HttpService();
+  final String urlBase = "https://oauth.reddit.com";
 
-  GetRequest(String url, Secret secret) {
-    print(url_base + url);
+  getRequest(String url, Secret secret) {
     Future<dynamic> response =
-        http_service.getRequest(url_base + url, secret.getToken());
+        httpService.getRequest(urlBase + url, secret.getToken());
     return response;
   }
 
-  GetRequestWithHeader(String url, Secret secret, json) {
+  getRequestWithHeader(String url, Secret secret, Map<String, String> json) {
     Future<dynamic> response =
-        http_service.getRequestHeader(url_base + url, secret.getToken(), json);
+        httpService.getRequestHeader(urlBase + url, secret.getToken(), json);
     return response;
   }
 
-  PatchRequestWithHeader(String url, Secret secret, json) {
-    Future<dynamic> response =
-        http_service.patchRequest(url_base + url, secret.getToken(), json);
+  postRequest(
+      String url, Map<String, String> header, Map<String, String> body) {
+    Future<dynamic> response = httpService.postRequest(url, header, body);
     return response;
   }
 
-  SendRequestWithHeader(String url, Secret secret, json) {
+  patchRequestWithHeader(String url, Secret secret, json) {
     Future<dynamic> response =
-        http_service.postRequest(url_base + url, secret.getToken(), json);
+        httpService.patchRequest(urlBase + url, secret.getToken(), json);
     return response;
   }
 
-  RequestNewPage(Secret secret) {
-    return GetRequest("/subreddits/mine/subscriber", secret);
+  requestNewPage(Secret secret) {
+    return getRequest("/subreddits/mine/subscriber", secret);
   }
 
-  RequestUserData(Secret secret) {
-    return GetRequest("/api/v1/me", secret);
+  requestUserData(Secret secret) {
+    return getRequest("/api/v1/me", secret);
   }
 
-  RequestSubscribedSubreddit(Secret secret) {
-    return GetRequest("/subreddits/mine/subscriber", secret);
+  requestSubscribedSubreddit(Secret secret) {
+    return getRequest("/subreddits/mine/subscriber", secret);
   }
 
-  RequestNewPost(Secret secret, String subreddit) {
-    print("/$subreddit/new");
-    return GetRequest("/$subreddit/new", secret);
+  requestNewPost(Secret secret) {
+    return getRequestWithHeader("/new", secret, {"limit": "10"});
   }
 
-  RequestUserSettings(Secret secret) {
-    return GetRequest("/api/v1/me/prefs", secret);
+  requestNewPostAfter(Secret secret, Map<String, String> header) {
+    return getRequestWithHeader("/new", secret, header);
   }
 
-  UpdateUserSettings(Secret secret, String settings) {
-    return PatchRequestWithHeader("/api/v1/me/prefs", secret, settings);
+  requestToken(Secret secret) {
+    final String id = secret.getClientID();
+    final String secret_ = secret.getSecret();
+
+    return postRequest("https://ssl.reddit.com/api/v1/access_token", {
+      "Authorization": "Basic " + base64.encode(utf8.encode("$id:$secret_"))
+    }, {
+      "grant_type": "authorization_code",
+      "code": secret.getCode(),
+      "redirect_uri": secret.getRedirectUri()
+    });
+  }
+
+  requestUserSettings(Secret secret) {
+    return getRequest("/api/v1/me/prefs", secret);
+  }
+
+  updateUserSettings(Secret secret, String settings) {
+    return patchRequestWithHeader("/api/v1/me/prefs", secret, settings);
   }
 }
