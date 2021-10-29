@@ -13,8 +13,8 @@ class PostFooter extends StatefulWidget {
       required this.name})
       : super(key: key);
 
-  final int ups;
-  final int downs;
+  int ups;
+  int downs;
   final String name;
   final int nbComment;
   final Secret secret;
@@ -40,9 +40,16 @@ class PostFooterState extends State<PostFooter> {
     if (upvoted) {
       this.upvoted = false;
       widget.api_request.VotePost(widget.secret, widget.name, 0);
-    } else {
+      widget.ups -= 1;
+    } else if (downvoted) {
       this.upvoted = true;
       this.downvoted = false;
+      widget.ups += 1;
+      widget.downs -= 1;
+      widget.api_request.VotePost(widget.secret, widget.name, 1);
+    } else {
+      this.upvoted = true;
+      widget.ups += 1;
       widget.api_request.VotePost(widget.secret, widget.name, 1);
     }
     setState(() {});
@@ -53,9 +60,16 @@ class PostFooterState extends State<PostFooter> {
     if (downvoted) {
       this.downvoted = false;
       widget.api_request.VotePost(widget.secret, widget.name, 0);
-    } else {
+      widget.downs -= 1;
+    } else if (upvoted) {
       this.upvoted = false;
       this.downvoted = true;
+      widget.ups -= 1;
+      widget.downs += 1;
+      widget.api_request.VotePost(widget.secret, widget.name, -1);
+    } else {
+      this.downvoted = true;
+      widget.downs += 1;
       widget.api_request.VotePost(widget.secret, widget.name, -1);
     }
     setState(() {});

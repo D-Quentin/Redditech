@@ -1,11 +1,17 @@
 import "dart:convert";
-import 'package:redditech/post_model.dart';
+import "menu/feed_page.dart";
 import "package:redditech/secret.dart";
 import "package:redditech/http_service.dart";
 
 class APIRequest {
   final HttpService httpService = HttpService();
   final String urlBase = "https://oauth.reddit.com";
+
+  Map<FeedPage, String> feedPageUrl = {
+    FeedPage.new_: "/new",
+    FeedPage.top_: "/top",
+    FeedPage.hot_: "/hot",
+  };
 
   getRequest(String url, Secret secret) {
     Future<dynamic> response =
@@ -44,12 +50,20 @@ class APIRequest {
     return getRequest("/subreddits/mine/subscriber/", secret);
   }
 
-  requestNewPost(Secret secret) {
-    return getRequest("/new/", secret);
+  requestPost(Secret secret, FeedPage feedpage) {
+    String? url = feedPageUrl[feedpage];
+    if (url != null) {
+      return getRequest(url, secret);
+    }
+    return "";
   }
 
-  requestNewPostAfter(Secret secret, String params) {
-    return getRequest("/new/" + params, secret);
+  requestPostAfter(Secret secret, FeedPage feedpage, String params) {
+    String? url = feedPageUrl[feedpage];
+    if (url != null) {
+      return getRequest(url + params, secret);
+    }
+    return "";
   }
 
   requestToken(Secret secret) {
@@ -77,8 +91,8 @@ class APIRequest {
     print(secret.getToken());
     print(vote.toString());
     print(postname);
-    postRequest("/api/vote", {
-      "Authorization": "bearer ${secret.getToken()}"
+    postRequest("https://oauth.reddit.com/api/vote/", {
+      "Authorization": "bearer ${secret.getToken()}",
     }, {
       "dir": vote.toString(),
       "id": postname,

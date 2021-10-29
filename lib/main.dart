@@ -47,15 +47,17 @@ class RedditechHomePageState extends State<RedditechHomePage> {
   Widget getBody() {
     switch (this.selectedIndex) {
       case 0:
-        return SubredditNewWidget(this.secret);
+        return NewFeedPageWidget(this.secret);
       case 1:
-        return SubredditHotWidget(this.secret);
+        return TopFeedPageWidget(this.secret);
       case 2:
-        return SubredditSearchWidget(this.secret);
+        return HotFeedPageWidget(this.secret);
       case 3:
-        return SubredditSettingsWidget(this.secret);
+        return SubredditSearchWidget(secret);
+      case 5:
+        return SubredditSettingsWidget(secret);
       default:
-        return SubredditNewWidget(this.secret);
+        return FeedPageWidget(this.secret, FeedPage.new_);
     }
   }
 
@@ -71,15 +73,51 @@ class RedditechHomePageState extends State<RedditechHomePage> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.fiber_new_rounded), label: "New"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.local_fire_department_rounded), label: "Hot"),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+                icon: Icon(Icons.align_vertical_bottom_rounded), label: "Top"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: "Settings")
+                icon: Icon(Icons.local_fire_department_rounded), label: "Hot"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.search_rounded), label: "Search"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.settings_rounded), label: "Settings")
           ],
           onTap: (int index) {
             this._onTapHandler(index);
           }),
     );
+  }
+}
+
+class NewFeedPageWidget extends StatelessWidget {
+  NewFeedPageWidget(this.secret);
+
+  final Secret secret;
+
+  @override
+  Widget build(BuildContext context) {
+    return (FeedPageWidget(secret, FeedPage.new_));
+  }
+}
+
+class TopFeedPageWidget extends StatelessWidget {
+  TopFeedPageWidget(this.secret);
+
+  final Secret secret;
+
+  @override
+  Widget build(BuildContext context) {
+    return (FeedPageWidget(secret, FeedPage.top_));
+  }
+}
+
+class HotFeedPageWidget extends StatelessWidget {
+  HotFeedPageWidget(this.secret);
+
+  final Secret secret;
+
+  @override
+  Widget build(BuildContext context) {
+    return (FeedPageWidget(secret, FeedPage.hot_));
   }
 }
 

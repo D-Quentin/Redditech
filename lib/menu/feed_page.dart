@@ -6,17 +6,24 @@ import "package:flutter/cupertino.dart";
 import "package:redditech/api_request.dart";
 import "package:pull_to_refresh/pull_to_refresh.dart";
 
-class SubredditNewWidget extends StatefulWidget {
-  SubredditNewWidget(this.secret);
-
-  final Secret secret;
-
-  @override
-  SubredditNewWidgetState createState() => SubredditNewWidgetState(secret);
+enum FeedPage {
+  new_,
+  top_,
+  hot_,
 }
 
-class SubredditNewWidgetState extends State<SubredditNewWidget> {
-  SubredditNewWidgetState(this.secret);
+class FeedPageWidget extends StatefulWidget {
+  FeedPageWidget(this.secret, this.feedpage);
+
+  final Secret secret;
+  final FeedPage feedpage;
+
+  @override
+  FeedPageStateWidget createState() => FeedPageStateWidget(secret);
+}
+
+class FeedPageStateWidget extends State<FeedPageWidget> {
+  FeedPageStateWidget(this.secret);
 
   final Secret secret;
   bool firstLoad = true;
@@ -28,7 +35,7 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
       RefreshController(initialRefresh: false);
 
   void _firstLoad() async {
-    await api.requestNewPost(this.secret).then((String string) {
+    await api.requestPost(this.secret, widget.feedpage).then((String string) {
       postList = unserializer.getPostFromJson(string);
       if (mounted) setState(() {});
       _refreshController.refreshCompleted();
@@ -36,7 +43,7 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
   }
 
   void _onRefresh() async {
-    await api.requestNewPost(this.secret).then((String string) {
+    await api.requestPost(this.secret, widget.feedpage).then((String string) {
       postList = unserializer.getPostFromJson(string);
       if (mounted) setState(() {});
       _refreshController.refreshCompleted();
@@ -45,7 +52,7 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
 
   void _onLoading() async {
     await api
-        .requestNewPostAfter(this.secret,
+        .requestPostAfter(this.secret, widget.feedpage,
             "?after=${postList.last.after}&count=${postList.length}")
         .then((String string) {
       List<Post> postListAfter = unserializer.getPostFromJson(string);
