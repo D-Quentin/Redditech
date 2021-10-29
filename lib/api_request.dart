@@ -1,4 +1,5 @@
 import "dart:convert";
+import 'package:redditech/post_model.dart';
 import "package:redditech/secret.dart";
 import "package:redditech/http_service.dart";
 
@@ -35,6 +36,7 @@ class APIRequest {
   }
 
   requestUserData(Secret secret) {
+    // printWrapped(getRequest("api/v1/me", secret));
     return getRequest("api/v1/me", secret);
   }
 
@@ -69,5 +71,18 @@ class APIRequest {
 
   updateUserSettings(Secret secret, String settings) {
     return patchRequestWithHeader("/api/v1/me/prefs", secret, settings);
+  }
+
+  VotePost(Secret secret, String postname, int vote) {
+    print(secret.getToken());
+    print(vote.toString());
+    print(postname);
+    postRequest("/api/vote", {
+      "Authorization": "bearer ${secret.getToken()}"
+    }, {
+      "dir": vote.toString(),
+      "id": postname,
+      "rank": "10",
+    });
   }
 }

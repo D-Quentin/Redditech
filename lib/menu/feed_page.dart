@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:redditech/reddit_post_widget.dart";
+import 'package:redditech/postWidget/reddit_post_widget.dart';
 import "package:redditech/secret.dart";
 import "package:redditech/post_model.dart";
 import "package:flutter/cupertino.dart";
@@ -90,7 +90,9 @@ class SubredditNewWidgetState extends State<SubredditNewWidget> {
         onRefresh: _onRefresh,
         onLoading: _onLoading,
         child: ListView.builder(
-          itemBuilder: (c, i) => Card(child: RedditechPostWidget(postList[i])),
+          itemBuilder: (c, i) => Card(
+              color: Color.fromARGB(255, 240, 240, 240),
+              child: RedditechPostWidget(postList[i], secret)),
           // itemExtent: 100.0,
           itemCount: postList.length,
         ),

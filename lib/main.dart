@@ -1,7 +1,7 @@
 import "package:redditech/login.dart";
 import "package:flutter/material.dart";
 import "package:redditech/secret.dart";
-import "package:redditech/menu/new.dart";
+import 'package:redditech/menu/feed_page.dart';
 import "package:redditech/api_request.dart";
 import "package:redditech/menu/settings.dart";
 

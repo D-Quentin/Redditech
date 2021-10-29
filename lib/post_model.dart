@@ -1,6 +1,4 @@
 import "dart:convert";
-import "dart:developer";
-import "package:http/http.dart";
 
 void printWrapped(String text) {
   final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
@@ -24,15 +22,27 @@ class SubscribedSubreddit {
 
 class Post {
   Post(this.after, this.title, this.author, this.subreddit, this.ups,
-      this.downs, this.imageUrl);
+      this.downs, this.imageUrl, this.selftext, this.numComment, this.name) {
+    if (imageUrl.contains("www.reddit.com")) {
+      this.imageUrl = "";
+    }
+    if (selftext.contains("https://preview.redd.it/")) {
+      this.link = selftext;
+      this.selftext = "";
+    }
+  }
 
   final int ups;
+  String link = "";
+  String imageUrl;
+  String selftext;
   final int downs;
+  final String name;
   final String after;
   final String title;
   final String author;
+  final int numComment;
   final String subreddit;
-  final String imageUrl;
 }
 
 class UserSettings {
@@ -105,15 +115,17 @@ class Unserializer {
     List<Post> posts = [];
     int nb = j["data"]["dist"];
     for (int i = 0; i < nb; i += 1) {
-      print(j["data"]["children"][i]["data"]["url"]);
       posts.add(Post(
         j["data"]["after"] as String,
         j["data"]["children"][i]["data"]["title"] as String,
-        j["data"]["children"][i]["data"]["author_fullname"] as String,
+        j["data"]["children"][i]["data"]["author"] as String,
         j["data"]["children"][i]["data"]["subreddit_name_prefixed"] as String,
         j["data"]["children"][i]["data"]["ups"] as int,
         j["data"]["children"][i]["data"]["downs"] as int,
         j["data"]["children"][i]["data"]["url"] as String,
+        j["data"]["children"][i]["data"]["selftext"] as String,
+        j["data"]["children"][i]["data"]["num_comments"] as int,
+        j["data"]["children"][i]["data"]["name"] as String,
       ));
     }
     return posts;
