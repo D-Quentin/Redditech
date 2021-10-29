@@ -40,10 +40,25 @@ class PostContentState extends State<PostContent> {
       widgets.add(
         Padding(
           padding: EdgeInsets.only(top: 4, bottom: 4),
-          child: Text(
-            widget.selftext,
-            style: TextStyle(fontSize: 14),
-            textAlign: TextAlign.start,
+          child: GestureDetector(
+            child: Text(
+              widget.selftext,
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.start,
+              maxLines: 10,
+              overflow: TextOverflow.fade,
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return TextVisualizerWidget(
+                        title: widget.title, text: widget.selftext);
+                  },
+                ),
+              );
+            },
           ),
         ),
       );
@@ -83,6 +98,47 @@ class PostContentState extends State<PostContent> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: getContentBody(),
+      ),
+    );
+  }
+}
+
+class TextVisualizerWidget extends StatelessWidget {
+  const TextVisualizerWidget(
+      {Key? key, required this.title, required this.text})
+      : super(key: key);
+
+  final String text;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Padding(
+          padding: EdgeInsets.only(left: 16.0, right: 16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  this.title,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.start,
+                ),
+              ),
+              Text(
+                this.text,
+                style: TextStyle(fontSize: 15),
+                textAlign: TextAlign.start,
+              ),
+            ],
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
       ),
     );
   }

@@ -54,7 +54,7 @@ class RedditechHomePageState extends State<RedditechHomePage> {
         return HotFeedPageWidget(this.secret);
       case 3:
         return SubredditSearchWidget(secret);
-      case 5:
+      case 4:
         return SubredditSettingsWidget(secret);
       default:
         return FeedPageWidget(this.secret, FeedPage.new_);
