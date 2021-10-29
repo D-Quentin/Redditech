@@ -1,22 +1,17 @@
 import "package:flutter/material.dart";
 import 'package:redditech/secret.dart';
 import "package:flutter/cupertino.dart";
+import "package:redditech/post_model.dart";
 import "package:redditech/api_request.dart";
 
 class PostFooter extends StatefulWidget {
-  PostFooter(
-      {Key? key,
-      required this.secret,
-      required this.ups,
-      required this.downs,
-      required this.nbComment,
-      required this.name})
-      : super(key: key);
+  PostFooter({
+    Key? key,
+    required this.post,
+    required this.secret,
+  }) : super(key: key);
 
-  int ups;
-  int downs;
-  final String name;
-  final int nbComment;
+  final Post post;
   final Secret secret;
   final APIRequest api_request = APIRequest();
 
@@ -29,28 +24,28 @@ class PostFooterState extends State<PostFooter> {
   bool downvoted = false;
 
   Widget getCommentButton() {
-    if (widget.nbComment > 1) {
-      return Text("${widget.nbComment} Comments");
+    if (widget.post.numComment > 1) {
+      return Text("${widget.post.numComment} Comments");
     }
-    return Text("${widget.nbComment} Comment");
+    return Text("${widget.post.numComment} Comment");
   }
 
   _handlePressUpvote() {
     print("pressed");
     if (upvoted) {
       this.upvoted = false;
-      widget.api_request.VotePost(widget.secret, widget.name, 0);
-      widget.ups -= 1;
+      widget.api_request.VotePost(widget.secret, widget.post.name, 0);
+      widget.post.ups -= 1;
     } else if (downvoted) {
       this.upvoted = true;
       this.downvoted = false;
-      widget.ups += 1;
-      widget.downs -= 1;
-      widget.api_request.VotePost(widget.secret, widget.name, 1);
+      widget.post.ups += 1;
+      widget.post.downs -= 1;
+      widget.api_request.VotePost(widget.secret, widget.post.name, 1);
     } else {
       this.upvoted = true;
-      widget.ups += 1;
-      widget.api_request.VotePost(widget.secret, widget.name, 1);
+      widget.post.ups += 1;
+      widget.api_request.VotePost(widget.secret, widget.post.name, 1);
     }
     setState(() {});
   }
@@ -59,18 +54,18 @@ class PostFooterState extends State<PostFooter> {
     // widget.api_request.downvotePost();
     if (downvoted) {
       this.downvoted = false;
-      widget.api_request.VotePost(widget.secret, widget.name, 0);
-      widget.downs -= 1;
+      widget.api_request.VotePost(widget.secret, widget.post.name, 0);
+      widget.post.downs -= 1;
     } else if (upvoted) {
       this.upvoted = false;
       this.downvoted = true;
-      widget.ups -= 1;
-      widget.downs += 1;
-      widget.api_request.VotePost(widget.secret, widget.name, -1);
+      widget.post.ups -= 1;
+      widget.post.downs += 1;
+      widget.api_request.VotePost(widget.secret, widget.post.name, -1);
     } else {
       this.downvoted = true;
-      widget.downs += 1;
-      widget.api_request.VotePost(widget.secret, widget.name, -1);
+      widget.post.downs += 1;
+      widget.api_request.VotePost(widget.secret, widget.post.name, -1);
     }
     setState(() {});
   }
@@ -102,7 +97,7 @@ class PostFooterState extends State<PostFooter> {
             textStyle: const TextStyle(fontSize: 12),
           ),
           onPressed: () {
-            print("pressed");
+            // _handleCommentButtonPressed();
           },
           child: getCommentButton(),
         ),
@@ -116,7 +111,7 @@ class PostFooterState extends State<PostFooter> {
                 children: [
                   Icon(Icons.keyboard_arrow_up_sharp,
                       color: _getUpvoteButtonColor()),
-                  Text("${widget.ups}",
+                  Text("${widget.post.ups}",
                       style: TextStyle(color: _getUpvoteButtonColor())),
                 ],
               ),
@@ -129,7 +124,7 @@ class PostFooterState extends State<PostFooter> {
                 children: [
                   Icon(Icons.keyboard_arrow_down_sharp,
                       color: _getDownvoteButtonColor()),
-                  Text("${widget.downs}",
+                  Text("${widget.post.downs}",
                       style: TextStyle(color: _getDownvoteButtonColor())),
                 ],
               ),

@@ -1,11 +1,10 @@
 import "package:flutter/cupertino.dart";
+import "package:redditech/post_model.dart";
 
 class PostBanner extends StatelessWidget {
-  PostBanner({Key? key, required this.subreddit, required this.author})
-      : super(key: key);
+  PostBanner({Key? key, required this.post}) : super(key: key);
 
-  final String author;
-  final String subreddit;
+  final Post post;
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +14,10 @@ class PostBanner extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(
-          this.subreddit,
+          this.post.subreddit,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        Text(this.author, textAlign: TextAlign.right),
+        Text(this.post.author, textAlign: TextAlign.right),
       ],
     );
   }

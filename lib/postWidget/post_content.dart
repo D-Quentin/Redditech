@@ -1,20 +1,13 @@
+import "package:flutter/material.dart";
 import "package:flutter/cupertino.dart";
-import 'package:flutter/material.dart';
+import "package:redditech/post_model.dart";
 import "package:photo_view/photo_view.dart";
+import "package:redditech/postWidget/reddit_post_widget.dart";
 
 class PostContent extends StatefulWidget {
-  PostContent(
-      {Key? key,
-      required this.title,
-      required this.url,
-      required this.selftext,
-      required this.link})
-      : super(key: key);
+  PostContent({Key? key, required this.post}) : super(key: key);
 
-  final String url;
-  final String link;
-  final String title;
-  final String selftext;
+  final Post post;
 
   @override
   PostContentState createState() => PostContentState();
@@ -25,24 +18,24 @@ class PostContentState extends State<PostContent> {
 
   getContentBody() {
     List<Widget> widgets = [];
-    if (widget.title.isNotEmpty) {
+    if (widget.post.title.isNotEmpty) {
       widgets.add(
         Padding(
           padding: EdgeInsets.only(top: 5, bottom: 15),
           child: Text(
-            widget.title,
+            widget.post.title,
             style: TextStyle(fontSize: 16.5, fontWeight: FontWeight.bold),
           ),
         ),
       );
     }
-    if (widget.selftext.isNotEmpty) {
+    if (widget.post.selftext.isNotEmpty) {
       widgets.add(
         Padding(
           padding: EdgeInsets.only(top: 4, bottom: 4),
           child: GestureDetector(
             child: Text(
-              widget.selftext,
+              widget.post.selftext,
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.start,
               maxLines: 10,
@@ -54,7 +47,7 @@ class PostContentState extends State<PostContent> {
                 MaterialPageRoute(
                   builder: (context) {
                     return TextVisualizerWidget(
-                        title: widget.title, text: widget.selftext);
+                        title: widget.post.title, text: widget.post.selftext);
                   },
                 ),
               );
@@ -63,17 +56,17 @@ class PostContentState extends State<PostContent> {
         ),
       );
     }
-    if (widget.url.isNotEmpty) {
+    if (widget.post.imageUrl.isNotEmpty) {
       widgets.add(
         Padding(
           padding: EdgeInsets.only(top: 4, bottom: 4),
           child: GestureDetector(
             child: Image.network(
-              widget.url,
+              widget.post.imageUrl,
             ),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return ImageVisualizerWidget(url: widget.url);
+                return ImageVisualizerWidget(url: widget.post.imageUrl);
               }));
             },
           ),
@@ -118,23 +111,25 @@ class TextVisualizerWidget extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(left: 16.0, right: 16.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(bottom: 16.0),
-                child: Text(
-                  this.title,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.start,
-                ),
+              // RedditechPostWidget(widget.post);
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              // children: [
+              //   Padding(
+              //     padding: EdgeInsets.only(bottom: 16.0),
+              //     child: Text(
+              //       this.title,
+              //       style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              //       textAlign: TextAlign.start,
+              //     ),
+              //   ),
+              //   Text(
+              //     this.text,
+              //     style: TextStyle(fontSize: 15),
+              //     textAlign: TextAlign.start,
+              //   ),
+              // ],
               ),
-              Text(
-                this.text,
-                style: TextStyle(fontSize: 15),
-                textAlign: TextAlign.start,
-              ),
-            ],
-          ),
         ),
         onTap: () {
           Navigator.pop(context);

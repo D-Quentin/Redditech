@@ -25,29 +25,21 @@ class RedditechPostWidgetState extends State<RedditechPostWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           PostBanner(
-            subreddit: widget.post.subreddit,
-            author: widget.post.author,
+            post: widget.post,
           ),
           Divider(
             color: Colors.grey.shade400,
             height: 10,
             thickness: 1,
           ),
-          PostContent(
-              title: widget.post.title,
-              url: widget.post.imageUrl,
-              selftext: widget.post.selftext,
-              link: widget.post.link),
+          PostContent(post: widget.post),
           Divider(
             color: Colors.grey.shade400,
             height: 10,
             thickness: 1,
           ),
           PostFooter(
-            ups: widget.post.ups,
-            downs: widget.post.downs,
-            nbComment: widget.post.numComment,
-            name: widget.post.name,
+            post: widget.post,
             secret: widget.secret,
           ),
         ],

@@ -32,11 +32,11 @@ class Post {
     }
   }
 
-  final int ups;
+  int ups;
+  int downs;
   String link = "";
   String imageUrl;
   String selftext;
-  final int downs;
   final String name;
   final String after;
   final String title;
