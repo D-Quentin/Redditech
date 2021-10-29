@@ -1,10 +1,5 @@
 import "dart:convert";
 
-void printWrapped(String text) {
-  final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-  pattern.allMatches(text).forEach((match) => print(match.group(0)));
-}
-
 class UserData {
   UserData(this.name, this.icon_img, this.description, this.total_karma);
 
@@ -85,7 +80,6 @@ class Unserializer {
 
   UserSettings getUserSettingsfromJson(String str) {
     Map j = jsonDecode(str);
-    printWrapped(str);
     return UserSettings(
       j["over_18"] as bool,
       j["enable_followers"] as bool,
