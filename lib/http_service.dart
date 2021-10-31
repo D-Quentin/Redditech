@@ -15,7 +15,7 @@ class HttpService {
   Future<String> getRequest(String url, String token) async {
     final header = {
       "Content-Type": "application/json",
-      "Authorization": "bearer $token"
+      "Authorization": "bearer $token",
     };
     Response response = await get(Uri.parse(url), headers: header);
     return response.body;

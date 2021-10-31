@@ -57,6 +57,22 @@ class UserSettings {
   bool email_private_message;
 }
 
+class SubredditInfo {
+  SubredditInfo(
+    this.name,
+    this.title,
+    this.image,
+    this.description,
+    this.nbSubscriber,
+  );
+
+  String name;
+  String title;
+  String image;
+  String description;
+  String nbSubscriber;
+}
+
 class Unserializer {
   Map getJsonDecode(String str) {
     Map j = {};
@@ -101,6 +117,18 @@ class Unserializer {
       ));
     }
     return allSub;
+  }
+
+  SubredditInfo getSubredditInfo(String str) {
+    Map j = jsonDecode(str);
+    SubredditInfo sub_info = SubredditInfo(
+      j["data"]["display_name"],
+      "test",
+      j["data"]["header_img"],
+      j["data"]["description"],
+      j["data"]["subscribers"],
+    );
+    return sub_info;
   }
 
   List<Post> getPostFromJson(String str) {

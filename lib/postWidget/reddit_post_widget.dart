@@ -32,7 +32,7 @@ class RedditechPostWidgetState extends State<RedditechPostWidget> {
             height: 10,
             thickness: 1,
           ),
-          PostContent(post: widget.post),
+          PostContent(post: widget.post, secret: widget.secret),
           Divider(
             color: Colors.grey.shade400,
             height: 10,

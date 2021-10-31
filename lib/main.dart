@@ -1,3 +1,4 @@
+import "menu/search_page.dart";
 import "package:redditech/login.dart";
 import "package:flutter/material.dart";
 import "package:redditech/secret.dart";
@@ -35,8 +36,8 @@ class RedditechHomePageState extends State<RedditechHomePage> {
 
   Secret secret;
   int selectedIndex = 0;
-  String sub_subreddit = "";
-  APIRequest api_request = APIRequest();
+  String subSubreddit = "";
+  APIRequest apiRequest = APIRequest();
 
   void _onTapHandler(int index) {
     this.setState(() {
@@ -53,7 +54,7 @@ class RedditechHomePageState extends State<RedditechHomePage> {
       case 2:
         return HotFeedPageWidget(this.secret);
       case 3:
-        return SubredditSearchWidget(secret);
+        return SearchPageListWidget(this.secret);
       case 4:
         return SubredditSettingsWidget(secret);
       default:
@@ -118,25 +119,5 @@ class HotFeedPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return (FeedPageWidget(secret, FeedPage.hot_));
-  }
-}
-
-class SubredditHotWidget extends StatelessWidget {
-  SubredditHotWidget(this.secret);
-
-  final Secret secret;
-
-  Widget build(BuildContext context) {
-    return Center(child: Text("Hot"));
-  }
-}
-
-class SubredditSearchWidget extends StatelessWidget {
-  SubredditSearchWidget(this.secret);
-
-  final Secret secret;
-
-  Widget build(BuildContext context) {
-    return Center(child: Text("Search"));
   }
 }

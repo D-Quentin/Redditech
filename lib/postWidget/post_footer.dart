@@ -31,21 +31,20 @@ class PostFooterState extends State<PostFooter> {
   }
 
   _handlePressUpvote() {
-    print("pressed");
     if (upvoted) {
       this.upvoted = false;
-      widget.api_request.VotePost(widget.secret, widget.post.name, 0);
+      widget.api_request.votePost(widget.secret, widget.post.name, 0);
       widget.post.ups -= 1;
     } else if (downvoted) {
       this.upvoted = true;
       this.downvoted = false;
       widget.post.ups += 1;
-      widget.post.downs -= 1;
-      widget.api_request.VotePost(widget.secret, widget.post.name, 1);
+      widget.post.downs += 1;
+      widget.api_request.votePost(widget.secret, widget.post.name, 1);
     } else {
       this.upvoted = true;
       widget.post.ups += 1;
-      widget.api_request.VotePost(widget.secret, widget.post.name, 1);
+      widget.api_request.votePost(widget.secret, widget.post.name, 1);
     }
     setState(() {});
   }
@@ -54,18 +53,18 @@ class PostFooterState extends State<PostFooter> {
     // widget.api_request.downvotePost();
     if (downvoted) {
       this.downvoted = false;
-      widget.api_request.VotePost(widget.secret, widget.post.name, 0);
-      widget.post.downs -= 1;
+      widget.api_request.votePost(widget.secret, widget.post.name, 0);
+      widget.post.downs += 1;
     } else if (upvoted) {
       this.upvoted = false;
       this.downvoted = true;
       widget.post.ups -= 1;
-      widget.post.downs += 1;
-      widget.api_request.VotePost(widget.secret, widget.post.name, -1);
+      widget.post.downs -= 1;
+      widget.api_request.votePost(widget.secret, widget.post.name, -1);
     } else {
       this.downvoted = true;
-      widget.post.downs += 1;
-      widget.api_request.VotePost(widget.secret, widget.post.name, -1);
+      widget.post.downs -= 1;
+      widget.api_request.votePost(widget.secret, widget.post.name, -1);
     }
     setState(() {});
   }
@@ -97,7 +96,15 @@ class PostFooterState extends State<PostFooter> {
             textStyle: const TextStyle(fontSize: 12),
           ),
           onPressed: () {
-            // _handleCommentButtonPressed();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return CommentVisualizerWidget(
+                      post: widget.post, secret: widget.secret);
+                },
+              ),
+            );
           },
           child: getCommentButton(),
         ),
@@ -131,6 +138,109 @@ class PostFooterState extends State<PostFooter> {
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class CommentVisualizerWidget extends StatelessWidget {
+  const CommentVisualizerWidget(
+      {Key? key, required this.post, required this.secret})
+      : super(key: key);
+
+  final Post post;
+  final Secret secret;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(top: 30, left: 16, right: 16, bottom: 50),
+          child: Column(
+            children: [
+              WriteCommentWidget(post: this.post, secret: this.secret),
+              PreviewCommentWidget(post: this.post, secret: this.secret),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WriteCommentWidget extends StatelessWidget {
+  const WriteCommentWidget({Key? key, required this.post, required this.secret})
+      : super(key: key);
+
+  final Post post;
+  final Secret secret;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back),
+                color: Colors.blue,
+              ),
+            ),
+          ],
+        ),
+        TextField(
+          minLines: 5,
+          maxLines: 5,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Comment',
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            TextButton(
+              onPressed: () {},
+              child: Text("Post"),
+              style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+              ),
+            ),
+          ],
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 10, bottom: 10),
+          child: Divider(
+            color: Colors.grey.shade400,
+            height: 10,
+            thickness: 1,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PreviewCommentWidget extends StatelessWidget {
+  const PreviewCommentWidget(
+      {Key? key, required this.post, required this.secret})
+      : super(key: key);
+
+  final Post post;
+  final Secret secret;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text("palceholder"),
       ],
     );
   }

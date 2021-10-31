@@ -30,9 +30,36 @@ class FeedPageStateWidget extends State<FeedPageWidget> {
   String jsonContent = "";
   List<Post> postList = [];
   APIRequest api = APIRequest();
+  String selectedSubreddit = "All";
   Unserializer unserializer = Unserializer();
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  void changeSelectedSubreddit(String sub) {
+    this.setState(() {
+      this.selectedSubreddit = sub;
+    });
+  }
+
+  List<String> getDropdownItem(List<SubscribedSubreddit>? snap) {
+    List<String> dropitem = [];
+
+    dropitem.add("All");
+    if (snap == null) {
+      return dropitem;
+    }
+    for (var it = snap.iterator; it.moveNext();) {
+      dropitem.add(it.current.display_name);
+    }
+    return dropitem;
+  }
+
+  Future<List<SubscribedSubreddit>> getSubscribbedSubredditList() async {
+    api.requestSubscribedSubreddit(this.secret).then((String string) {
+      return unserializer.getSubcribbedSubredditFromJson(string);
+    });
+    return [];
+  }
 
   void _firstLoad() async {
     await api.requestPost(this.secret, widget.feedpage).then((String string) {
@@ -69,6 +96,47 @@ class FeedPageStateWidget extends State<FeedPageWidget> {
       this.firstLoad = false;
     }
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey.shade300,
+        toolbarHeight: 30,
+        leading: Padding(
+          padding: EdgeInsets.only(left: 10),
+          child: FutureBuilder<List<SubscribedSubreddit>>(
+            future: getSubscribbedSubredditList(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<SubscribedSubreddit>> snap) {
+              if (snap.hasData && snap.data != null) {
+                return DropdownButtonHideUnderline(
+                  child: DropdownButton(
+                    items: getDropdownItem(snap.data)
+                        .map<DropdownMenuItem<String>>(
+                      (String str) {
+                        return DropdownMenuItem<String>(
+                          child: Text(
+                            str,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  ),
+                );
+              }
+              return DropdownButtonHideUnderline(
+                child: DropdownButton(
+                  items: [
+                    DropdownMenuItem(
+                        child: Text(
+                      "Add",
+                      style: TextStyle(color: Colors.black),
+                    )),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
       body: SmartRefresher(
         enablePullDown: true,
         enablePullUp: true,
@@ -98,9 +166,9 @@ class FeedPageStateWidget extends State<FeedPageWidget> {
         onLoading: _onLoading,
         child: ListView.builder(
           itemBuilder: (c, i) => Card(
-              color: Color.fromARGB(255, 240, 240, 240),
-              child: RedditechPostWidget(postList[i], secret)),
-          // itemExtent: 100.0,
+            color: Color.fromARGB(255, 240, 240, 240),
+            child: RedditechPostWidget(postList[i], secret),
+          ),
           itemCount: postList.length,
         ),
       ),

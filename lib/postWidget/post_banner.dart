@@ -1,4 +1,5 @@
 import "package:flutter/cupertino.dart";
+import 'package:flutter/material.dart';
 import "package:redditech/post_model.dart";
 
 class PostBanner extends StatelessWidget {

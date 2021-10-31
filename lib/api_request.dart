@@ -1,5 +1,6 @@
 import "dart:convert";
 import "menu/feed_page.dart";
+import "package:uuid/uuid.dart";
 import "package:redditech/secret.dart";
 import "package:redditech/http_service.dart";
 
@@ -50,6 +51,7 @@ class APIRequest {
   }
 
   requestPost(Secret secret, FeedPage feedpage) {
+    print(secret.getToken());
     String? url = feedPageUrl[feedpage];
     if (url != null) {
       return getRequest(url, secret);
@@ -86,7 +88,7 @@ class APIRequest {
     return patchRequestWithHeader("/api/v1/me/prefs", secret, settings);
   }
 
-  VotePost(Secret secret, String postname, int vote) {
+  votePost(Secret secret, String postname, int vote) {
     postRequest("https://oauth.reddit.com/api/vote/", {
       "Authorization": "bearer ${secret.getToken()}",
     }, {
@@ -94,5 +96,16 @@ class APIRequest {
       "id": postname,
       "rank": "10",
     });
+  }
+
+  requestSubredditAbout(Secret secret, String subreddit) {
+    return getRequest("/$subreddit/about", secret);
+  }
+
+  requestSearchSubreddit(Secret secret, String string) {
+    var uuid = Uuid();
+    String param = "?q=" + string;
+    param += "&search_query_id=" + uuid.v1() + "&sort=relevance" + "&limit=10";
+    return getRequest("/subreddits/search" + param, secret);
   }
 }
